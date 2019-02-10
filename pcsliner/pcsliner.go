@@ -40,8 +40,10 @@ func (pl *PCSLiner) Pause() error {
 
 	pl.paused = true
 	pl.DoWriteHistory()
-
-	return pl.tmode.ApplyMode()
+	if pl.tmode != nil {
+		return pl.tmode.ApplyMode()
+	}
+	return nil
 }
 
 // Resume 恢复服务
@@ -51,8 +53,10 @@ func (pl *PCSLiner) Resume() error {
 	}
 
 	pl.paused = false
-
-	return pl.lmode.ApplyMode()
+	if pl.tmode != nil {
+		return pl.tmode.ApplyMode()
+	}
+	return nil
 }
 
 // Close 关闭服务

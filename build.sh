@@ -3,7 +3,7 @@
 name="BaiduPCS-Go"
 version=$1
 
-GOROOT=/usr/local/go1.10.4
+GOROOT=/usr/local/Cellar/go/1.11.5/libexec
 go=$GOROOT/bin/go
 
 if [ "$1" = "" ];then
