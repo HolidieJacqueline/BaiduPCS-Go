@@ -1019,6 +1019,7 @@ func main() {
 					IsLocateDownload:       c.Bool("locate"),
 					IsLocatePanAPIDownload: c.Bool("locate_pan"),
 					IsStreaming:            c.Bool("stream"),
+					IsPlay:            		c.Bool("play"),
 					SaveTo:                 saveTo,
 					Parallel:               c.Int("p"),
 					Load:                   c.Int("l"),
@@ -1062,6 +1063,10 @@ func main() {
 				cli.BoolFlag{
 					Name:  "stream",
 					Usage: "以流式文件的方式下载",
+				},
+				cli.BoolFlag{
+					Name:  "play",
+					Usage: "调用mpv播放流式文件文件",
 				},
 				cli.BoolFlag{
 					Name:  "share",

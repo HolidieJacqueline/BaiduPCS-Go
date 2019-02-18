@@ -16,13 +16,16 @@ import (
 	"github.com/iikira/BaiduPCS-Go/requester/downloader"
 	"github.com/oleiade/lane"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"sync/atomic"
+	"syscall"
 	"time"
 )
 
@@ -67,6 +70,7 @@ type (
 		IsLocateDownload       bool
 		IsLocatePanAPIDownload bool
 		IsStreaming            bool
+		IsPlay                 bool
 		SaveTo                 string
 		Parallel               int
 		Load                   int
@@ -534,6 +538,40 @@ func RunDownload(paths []string, options *DownloadOptions) {
 				}
 				if options.IsStreaming {
 					err = pcs.DownloadStreamFile(task.path, dfunc)
+				}
+				if options.IsPlay {
+					pfunc := func(downloadURL string, jar http.CookieJar) error {
+						u, err := url.Parse(downloadURL)
+						if err != nil {
+							log.Fatal(err)
+						}
+						cookieStr := "Cookie:"
+						for _, cookie := range jar.Cookies(u) {
+							cookieStr = cookieStr + cookie.Name
+							cookieStr = cookieStr + "="
+							cookieStr = cookieStr + cookie.Value
+							cookieStr = cookieStr + ";"
+							//fmt.Printf("  %s: %s\n", cookie.Name, cookie.Value)
+						}
+						unescapedPath, err := url.PathUnescape(downloadURL)
+						if err != nil {
+							log.Fatal(err)
+						}
+						binary, lookErr := exec.LookPath("mpv")
+						if lookErr != nil {
+							return lookErr
+						}
+						args := []string{"mpv", "--no-ytdl", "--cache-default", "20480", "--cache-secs", "120", "--http-header-fields", "User-Agent: netdisk;8.3.1;android-android", "--http-header-fields", cookieStr, unescapedPath}
+						env := os.Environ()
+						execErr := syscall.Exec(binary, args, env)
+						if execErr != nil {
+							return execErr
+						}
+
+						return nil
+					}
+
+					err = pcs.PlayStreamFile(task.path, pfunc)
 				} else {
 					err = pcs.DownloadFile(task.path, dfunc)
 				}

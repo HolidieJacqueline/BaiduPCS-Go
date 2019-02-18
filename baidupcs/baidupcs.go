@@ -51,6 +51,8 @@ const (
 	OperationDownloadFile = "下载单个文件"
 	// OperationDownloadStreamFile 下载流式文件
 	OperationDownloadStreamFile = "下载流式文件"
+	//OperationPlayStreamFile 播放流式文件
+	OperationPlayStreamFile = "播放流式文件"
 	// OperationLocateDownload 获取下载链接
 	OperationLocateDownload = "获取下载链接"
 	// OperationLocatePanAPIDownload 从百度网盘首页获取下载链接

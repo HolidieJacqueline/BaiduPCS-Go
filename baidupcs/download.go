@@ -113,6 +113,17 @@ func (pcs *BaiduPCS) DownloadStreamFile(path string, downloadFunc DownloadFunc) 
 	return downloadFunc(pcsURL.String(), pcs.client.Jar)
 }
 
+// PlayStreamFile 播放流式文件
+func (pcs *BaiduPCS) PlayStreamFile(path string, downloadFunc DownloadFunc) (err error) {
+	pcs.lazyInit()
+	pcsURL := pcs.generatePCSURL("stream", "download", map[string]string{
+		"path": path,
+	})
+	baiduPCSVerbose.Infof("%s URL: %s\n", OperationPlayStreamFile, pcsURL)
+
+	return downloadFunc(pcsURL.String(), pcs.client.Jar)
+}
+
 // LocateDownloadWithUserAgent 获取下载链接, 可指定User-Agent
 func (pcs *BaiduPCS) LocateDownloadWithUserAgent(pcspath, ua string) (info *URLInfo, pcsError pcserror.Error) {
 	dataReadCloser, pcsError := pcs.prepareLocateDownload(pcspath, ua)
